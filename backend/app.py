@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify # Create and manage the web app, access incoming data from frontend, jsonify
 import os # interact with computer software (create folders)
-# import pdfplumber
+
+from utils import parse_pdf_transaction
 
 app = Flask(__name__)
 
@@ -25,7 +26,14 @@ def parse_pdf():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
 
-    return "Success!"
+    transactions = parse_pdf_transaction(file_path)
+
+
+    return jsonify({
+    "file_name": file.filename,
+    "parsed_data": transactions
+})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
