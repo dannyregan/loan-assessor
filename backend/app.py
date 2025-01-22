@@ -25,11 +25,11 @@ def process_json():
             total_debit = sum_debits(data)
             total_credit = sum_credits(data)
             balance_check = check_balance(data)
-            total_monthly_deposits(data)
+            monthly_deposits = total_monthly_deposits(data)
 
 
             # Respond with the total debit
-            return jsonify({"total_debit": total_debit, "total_credit": total_credit, "balance_check": balance_check}), 200
+            return jsonify({"total_debit": total_debit, "total_credit": total_credit, "balance_check": balance_check, "monthly_deposits": monthly_deposits}), 200
         else:
             return jsonify({"error": "Expected a list of transactions"}), 400
 

@@ -42,16 +42,14 @@ def total_monthly_deposits(data):
     
     for transaction in data:
         date = transaction.get("Date")
-        deposit = transaction.get("Credit")
+        deposit = float(transaction.get("Credit"))
+        print(deposit, "deposit")
         if date and deposit:
             date = date.split(" ")
-            print(date)
             for item in date:
                 if item in months:
-                    print(item)
-                    monthly_deposits[item] = deposit
-                    # monthly_deposits[item] = monthly_deposits.get(item, deposit) + deposit
-    print(monthly_deposits)
+                    monthly_deposits[item] = monthly_deposits.get(item, 0) + deposit
+    return monthly_deposits
 
 def check_balance(data):
     # Iterate through the list of transactions
