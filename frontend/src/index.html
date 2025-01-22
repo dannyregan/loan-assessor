@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Submit</title>
+</head>
+<body>
+    <h2>Submit JSON Data</h2>
+    <form id="jsonForm">
+        <label for="jsonData">Paste your JSON data here:</label><br><br>
+        <textarea id="jsonData" name="jsonData" rows="10" cols="50" placeholder='{"name": "John", "age": 30, "city": "New York"}'></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h3>Response:</h3>
+    <pre id="responseOutput"></pre>
+
+    <script>
+        // Handle form submission
+        document.getElementById("jsonForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            // Get the JSON data from the textarea
+            const jsonData = document.getElementById("jsonData").value;
+
+            try {
+                // Validate the JSON
+                const parsedData = JSON.parse(jsonData);
+
+                // Send the data to the backend
+                const response = await fetch('http://127.0.0.1:5000/process_json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(parsedData)  // Send the parsed JSON to the server
+                });
+
+                // Handle the response
+                const responseData = await response.json();
+                document.getElementById("responseOutput").textContent = JSON.stringify(responseData, null, 2);
+
+            } catch (error) {
+                document.getElementById("responseOutput").textContent = 'Invalid JSON format or error processing the data.';
+            }
+        });
+    </script>
+</body>
+</html>

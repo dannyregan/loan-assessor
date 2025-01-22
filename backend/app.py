@@ -1,49 +1,33 @@
-# from flask import Flask, request, jsonify # Create and manage the web app, access incoming data from frontend, jsonify
-# import os # interact with computer software (create folders)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-# from utils import parse_pdf_transaction
-# from utils import identify_bank
-# from utils import parse_pdf_OCR
+from utils import sum_debits
 
-# app = Flask(__name__)
+app = Flask(__name__)
+CORS(app)
 
-# UPLOAD_FOLDER = 'uploads'
-# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+@app.route('/process_json', methods=['POST'])
+def process_json():
+    """Process JSON data and calculate total debit."""
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
 
-# @app.route('/')
-# def home():
-#     return "Welcome to the Loan Assessor API by Danny Regan."
+        # Print the incoming data for debugging
+        print("Received data:", data)
 
-# @app.route('/parse-pdf', methods=['POST'])
-# def parse_pdf():
-#     if 'file' not in request.files:
-#         return jsonify({"error": "No file provided"}), 400
-    
-#     file = request.files['file']
+        # Check if data is a list or dictionary
+        if isinstance(data, list):
+            # Calculate the total debit
+            total_debit = sum_debits(data)
 
-#     if file.filename == '':
-#         return jsonify({"error": "No selected file"}), 400
+            # Respond with the total debit
+            return jsonify({"total_debit": total_debit}), 200
+        else:
+            return jsonify({"error": "Expected a list of transactions"}), 400
 
-#     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-#     file.save(file_path)
+    except Exception as e:
+        return jsonify({"error": f"Error processing the data: {str(e)}"}), 400
 
-#     parse_pdf_OCR(file_path)
-
-#     # line_by_line_data = parse_pdf_transaction(file_path)
-#     # text_array = line_by_line_data["text"]
-
-#     # print(line_by_line_data["text"][:10])
-
-#     # bank = identify_bank(text_array)
-#     # print(bank)
-
-
-#     return jsonify({
-#     "file_name": file.filename
-#     # "parsed_data": line_by_line_data
-# })
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
