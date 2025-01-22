@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from utils import sum_debits
+from utils import sum_credits
+from utils import check_balance
+from utils import total_monthly_deposits
 
 app = Flask(__name__)
 CORS(app)
@@ -20,9 +23,13 @@ def process_json():
         if isinstance(data, list):
             # Calculate the total debit
             total_debit = sum_debits(data)
+            total_credit = sum_credits(data)
+            balance_check = check_balance(data)
+            total_monthly_deposits(data)
+
 
             # Respond with the total debit
-            return jsonify({"total_debit": total_debit}), 200
+            return jsonify({"total_debit": total_debit, "total_credit": total_credit, "balance_check": balance_check}), 200
         else:
             return jsonify({"error": "Expected a list of transactions"}), 400
 

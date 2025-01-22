@@ -3,7 +3,7 @@ def sum_debits(data):
 
     # Iterate through the list of transactions
     for transaction in data:
-        # Get the value of 'Debit' field
+        # Get the value of 'debit' field
         debit = transaction.get("Debit")
         
         if debit is not None:
@@ -16,3 +16,80 @@ def sum_debits(data):
                 continue
 
     return total_debit
+
+def sum_credits(data):
+    total_credit = 0
+
+    # Iterate through the list of transactions
+    for transaction in data:
+        # Get the value of 'credit' field
+        credit = transaction.get("Credit")
+        
+        if credit is not None:
+            try:
+                # Remove commas and convert the credit value to float
+                credit_value = float(credit.replace(",", ""))  # Remove commas
+                total_credit += credit_value
+            except ValueError:
+                # If the credit cannot be converted to a number, skip it
+                continue
+
+    return total_credit
+
+def total_monthly_deposits(data):
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    monthly_deposits = {}
+    
+    for transaction in data:
+        date = transaction.get("Date")
+        deposit = transaction.get("Credit")
+        if date and deposit:
+            date = date.split(" ")
+            print(date)
+            for item in date:
+                if item in months:
+                    print(item)
+                    monthly_deposits[item] = deposit
+                    # monthly_deposits[item] = monthly_deposits.get(item, deposit) + deposit
+    print(monthly_deposits)
+
+def check_balance(data):
+    # Iterate through the list of transactions
+    for transaction in data:
+        # Get the value of 'credit' field
+        balance = transaction.get("Balance")
+        
+        if balance is not None:
+            try:
+                # Remove commas and convert the credit value to float
+                balance_value = float(balance.replace(",", ""))  # Remove commas
+                if balance_value < 500:
+                    return f"This user is not a good loan recipient. Their balanced dropped to {balance_value}."
+                if balance_value < 1500:
+                    return f"This user may not be a good loan recipient. Their balanced dropped to {balance_value}."
+            except ValueError:
+                # If the credit cannot be converted to a number, skip it
+                continue
+
+    return True
+
+
+
+"""
+[ 
+    {
+        "Date": "Oct 25",
+        "Description": "Electronic WithdrawalFrom ATTREF 172970047495440N009864031006Payment 401469002EPAYQ",
+        "Debit": "308.48",
+        "Credit": "100",
+        "Balance": null
+    },
+    {
+        "Date": "Oct 25",
+        "Description": "Branch Account TransferTo Account 145574108240",
+        "Debit": "7,700.00",
+        "Credit": "50",
+        "Balance": null
+    }
+]
+"""
