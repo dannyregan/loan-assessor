@@ -15,7 +15,7 @@ def sum_debits(data):
                 # If the debit cannot be converted to a number, skip it
                 continue
 
-    return total_debit
+    return round(total_debit, 2)
 
 def sum_credits(data):
     total_credit = 0
@@ -34,7 +34,7 @@ def sum_credits(data):
                 # If the credit cannot be converted to a number, skip it
                 continue
 
-    return total_credit
+    return round(total_credit, 2)
 
 def total_monthly_deposits(data):
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -47,7 +47,7 @@ def total_monthly_deposits(data):
             date = date.split(" ")
             for item in date:
                 if item in months:
-                    monthly_deposits[item] = monthly_deposits.get(item, 0) + deposit
+                    monthly_deposits[item] = round(monthly_deposits.get(item, 0) + deposit, 2)
     return monthly_deposits
 
 def total_monthly_withdrawals(data):
@@ -56,12 +56,13 @@ def total_monthly_withdrawals(data):
     
     for transaction in data:
         date = transaction.get("Date")
-        withdrawal = float(transaction.get("Debit"))
+        withdrawal = round(float(transaction.get("Debit")), 2)
         if date and withdrawal:
             date = date.split(" ")
             for item in date:
                 if item in months:
-                    monthly_withdrawals[item] = monthly_withdrawals.get(item, 0) + withdrawal
+                    monthly_withdrawals[item] = round(monthly_withdrawals.get(item, 0) + withdrawal, 2)
+    print(monthly_withdrawals)
     return monthly_withdrawals
 
 def check_balance(data):
@@ -103,4 +104,25 @@ def check_balance(data):
         "Balance": null
     }
 ]
+
+
+[
+    {
+        "Date": "Oct 2",
+        "Description": "Electronic DepositFrom 36 TREAS 3109101036151 MISC PAY431833386360012REF=172750102657000N00",
+        "Debit": null,
+        "Credit": "7265.00",
+        "Balance": null
+    },
+    {
+        "Date": "Oct 2",
+        "Description": "Debit Purchase - VISAOn 092917 MISSION KSPANERA BREAD #20REF #24427337272720040130721************8781",
+        "Debit": "7.00",
+        "Credit": null,
+        "Balance": null
+    }
+]
+
+null must be "0"
+keys must be capitalized "Debit"
 """
