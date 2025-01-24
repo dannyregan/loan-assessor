@@ -3,48 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/styles.css">
     <title>JSON Data Submit</title>
+
 </head>
 <body>
-    <h2>Submit JSON Data</h2>
-    <form id="jsonForm">
-        <label for="jsonData">Paste your JSON data here:</label><br><br>
-        <textarea id="jsonData" name="jsonData" rows="10" cols="50" placeholder='{"name": "John", "age": 30, "city": "New York"}'></textarea><br><br>
-        <button type="submit">Submit</button>
-    </form>
+    <h1>Loan Eligibility Assessment</h1>
+    <div class="container">
+        <div class="form">
+            <h2 class="subheader">1. Copy and paste the following prompt into Google's Gemini AI along with the PDF you'd like to parse:</h2>
+            <p class="prompt">"Extract the "Date", "Debit", "Credit", and "Balance" from every page of this file and return the info as JSON. The very first value must have a "Balance" that reflects the balance of the account on the first day of the bank statement. The months in the "Date" values must contain a space between them and any numeric values, and must be written with only three letters ("Sep", "Oct", etc.), Values that would normally be null should be entered as "0." Numbers should never contain commas."</p>
+            <form id="jsonForm">
+                <label for="jsonData" class="subheader">2. Paste your JSON data here:</label><br><br>
+                <textarea id="jsonData" name="jsonData" rows="10" cols="40" placeholder='[
+    {
+        "name": "John", 
+        "age": 30, 
+        "city": "New York"
+    }
+]'></textarea><br><br>
+                <button type="submit">Submit</button>
+            </form>
 
-    <h3>Response:</h3>
-    <pre id="responseOutput"></pre>
+        </div>
+        <div class="response">
+            <h3>Response:</h3>
+            <pre id="responseOutput"></pre>
 
-    <script>
-        // Handle form submission
-        document.getElementById("jsonForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+            <script>
+                // Handle form submission
+                document.getElementById("jsonForm").addEventListener("submit", async function(event) {
+                    event.preventDefault();
 
-            // Get the JSON data from the textarea
-            const jsonData = document.getElementById("jsonData").value;
+                    // Get the JSON data from the text area
+                    const jsonData = document.getElementById("jsonData").value;
 
-            try {
-                // Validate the JSON
-                const parsedData = JSON.parse(jsonData);
+                    try {
+                        // Validate the JSON
+                        const parsedData = JSON.parse(jsonData);
 
-                // Send the data to the backend
-                const response = await fetch('http://127.0.0.1:5000/process_json', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(parsedData)  // Send the parsed JSON to the server
+                        // Send the data to the backend
+                        const response = await fetch('http://127.0.0.1:5000/process_json', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(parsedData)  // Send the parsed JSON to the server
+                        });
+
+                        // Handle the response
+                        const responseData = await response.json();
+                        document.getElementById("responseOutput").textContent = JSON.stringify(responseData, null, 2);
+
+                    } catch (error) {
+                        document.getElementById("responseOutput").textContent = 'Invalid JSON format or error processing the data.';
+                    }
                 });
-
-                // Handle the response
-                const responseData = await response.json();
-                document.getElementById("responseOutput").textContent = JSON.stringify(responseData, null, 2);
-
-            } catch (error) {
-                document.getElementById("responseOutput").textContent = 'Invalid JSON format or error processing the data.';
-            }
-        });
-    </script>
+            </script>
+        </div>
+    </div>
 </body>
 </html>
