@@ -6,6 +6,9 @@ from utils import sum_credits
 from utils import check_balance
 from utils import total_monthly_deposits
 from utils import total_monthly_withdrawals
+from utils import monthly_cashflow
+from utils import check_balance
+from utils import check_balance
 
 app = Flask(__name__)
 CORS(app)
@@ -28,10 +31,13 @@ def process_json():
             balance_check = check_balance(data)
             monthly_deposits = total_monthly_deposits(data)
             monthly_withdrawals = total_monthly_withdrawals(data)
+            monthly_cashflows = monthly_cashflow(data)
+            # balance = check_balance(data)
+
 
 
             # Respond with the total debit
-            return jsonify({"total_debit": total_debit, "total_credit": total_credit, "balance_check": balance_check, "Monthly Deposits": monthly_deposits, "Monthly Withdrawals": monthly_withdrawals}), 200
+            return jsonify({"Monthly Deposits": monthly_deposits, "Monthly Withdrawals": monthly_withdrawals, "Monthly Cashflow": monthly_cashflows}), 200
         else:
             return jsonify({"error": "Expected a list of transactions"}), 400
 
